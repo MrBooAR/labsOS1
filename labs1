@@ -1,0 +1,57 @@
+#include <iostream>
+#include <Windows.h>
+#include <sstream>
+using namespace std;
+const char* CREATOR = "creator.exe";
+const char* REPORTER = "reporter.exe";
+void fcreator(const std::string& binname, const int& count){
+	STARTUPINFO startup_info;
+	PROCESS_INFORMATION process_info;
+	ZeroMemory(&startup_info, sizeof(startup_info));
+	startup_info.cb = sizeof(startup_info);
+	stringstream sstream;
+	sstream << CREATOR << " " << binname << " " << count;
+	if (!CreateProcess(NULL, (LPWSTR)(char*)sstream.str().c_str(),NULL, NULL, FALSE, CREATE_NEW_CONSOLE,NULL, NULL, &startup_info, &process_info))
+	{
+		cout << "Failed to start a process!\n";
+	}
+	cout << "Process started!\n";
+	WaitForSingleObject(process_info.hProcess, INFINITE);
+	cout << "Process stoped!\n";
+}
+void freported(const std::string& binname, const std::string& reportname, const double& hourpay) {
+	STARTUPINFO startup_info;
+	PROCESS_INFORMATION process_info;
+	ZeroMemory(&startup_info, sizeof(startup_info));
+	startup_info.cb = sizeof(startup_info);
+	stringstream sstream;
+	sstream << REPORTER << " " << binname << " " << reportname << " " << hourpay;
+	if (!CreateProcess(NULL, (LPWSTR)(char*)sstream.str().c_str(), NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &startup_info, &process_info))
+	{
+		cout << "Failed to start a process!\n";
+	}
+	else
+	{
+		cout << "Process started!\n";
+		WaitForSingleObject(process_info.hProcess, INFINITE);
+		cout << "Process stoped!\n";
+	}
+}
+int main()
+{
+	string binname;
+	long long count = 0;
+	cout << "Enter binary file name:\t";
+	cin >> binname;
+	cout << "Enter record count:\t";
+	cin >> count;
+	fcreator(binname, count);
+	string reportname;
+	double hourpay = 0.0;
+	cout << "\nEnter the report filename:\t";
+	cin >> reportname;
+	cout << "Enter the hourly pay:\t";
+	cin >> hourpay;
+	freported(binname, reportname, hourpay);
+	return 0;
+}
